@@ -117,12 +117,12 @@ class EvalCallback(EventCallback):
         :param globals_:
         """
         info = locals_["info"]
-        maybe_is_success = info.get("is_success") or info.get("solved")  # solved for myo suite
+        maybe_is_success = info.get("is_success") or info.get("solved") or info.get("success")  # solved for myo suite
         local_per_time_step_buffer = []
         if maybe_is_success is not None:
             local_per_time_step_buffer.append(maybe_is_success)
         if locals_["done"]:
-            maybe_is_success = info.get("is_success") or info.get("solved")  # solved for myo suite
+            maybe_is_success = info.get("is_success") or info.get("solved") or info.get("success")  # solved for myo suite
             if maybe_is_success is not None:
                 self._is_success_buffer.append(maybe_is_success)
             if len(local_per_time_step_buffer) > 0:
