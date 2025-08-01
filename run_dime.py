@@ -25,8 +25,12 @@ def _create_alg(cfg: DictConfig):
         print("myosuite not installed")
         pass
 
-    training_env = gym.make(cfg.env_name)
-    eval_env = make_vec_env(cfg.env_name, n_envs=1, seed=cfg.seed)
+    import mani_skill
+    import mani_skill_wrapper
+
+    
+    training_env = gym.make(cfg.env_name, reward_mode='normalized_dense')
+    eval_env = make_vec_env(cfg.env_name, n_envs=1, seed=cfg.seed, env_kwargs={'reward_mode':'normalized_dense'})
     env_name_split = cfg.env_name.split('/')
     rb_class = None
     if env_name_split[0] == 'dm_control':
@@ -35,12 +39,19 @@ def _create_alg(cfg: DictConfig):
     tensorboard_log_dir = f"./logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/seed= + {str(cfg.seed)}/"
     eval_log_dir = f"./eval_logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/seed= + {str(cfg.seed)}/eval/"
 
+    model_save_path = cfg.get("model_save_path", None)
+    if model_save_path is not None:
+        import yaml
+        model_save_path = os.path.dirname(os.path.abspath(__file__)) + '/saved_models/' + cfg.model_save_path
+        os.makedirs(model_save_path, exist_ok=True)
+        with open(model_save_path + '/config.yaml', 'w') as yaml_file:
+            yaml.dump(cfg, yaml_file, default_flow_style=False)
 
     model = DIME(
         "MultiInputPolicy" if isinstance(training_env.observation_space, gym.spaces.Dict) else "MlpPolicy",
         env=training_env,
-        model_save_path=None,
-        save_every_n_steps=int(cfg.tot_time_steps / 100000),
+        model_save_path=model_save_path,
+        save_every_n_steps=10_000,
         cfg=cfg,
         tensorboard_log=tensorboard_log_dir,
         replay_buffer_class=rb_class

@@ -23,4 +23,8 @@ warmup: const
 iters: ${tot_time_steps}
 warmup_iters: 60_000
 
-env_name: dm_control/dog-run
+# env_name: dm_control/dog-run
+env_name: PushTNoBatchDim-v1
+
+model_save_path: ${wandb.group}_${wandb.job_type}_s_${seed}
+n_saved_models: 1
