@@ -44,6 +44,8 @@ class DiffPol(BaseJaxPolicy):
             obs = jnp.array([spaces.flatten(self.observation_space, self.observation_space.sample())])
         else:
             obs = jnp.array([self.observation_space.sample()])
+        if len(obs.shape) == 3:
+            obs = obs[0]  # remove batch dimension if it is 1
         action = jnp.array([self.action_space.sample()])
 
         a_dim = self.action_space.shape[0]
@@ -94,7 +96,7 @@ class DiffPol(BaseJaxPolicy):
         self.qf.apply = jax.jit(  # type: ignore[method-assign]
             self.qf.apply,
             static_argnames=("dropout_rate", "use_layer_norm",
-                             "use_batch_norm", "batch_norm_momentum", "bn_mode"),
+                            "use_batch_norm", "batch_norm_momentum", "bn_mode"),
         )
 
         # Initialize actor
@@ -107,7 +109,7 @@ class DiffPol(BaseJaxPolicy):
         sampler = sample_od
         self.sampler = partial(sampler, integrator=self.integrator, diffusion_model=self.actor_model)
         self.target_sampler = partial(sampler, integrator=self.target_integrator,
-                                      diffusion_model=self.actor_target_model)
+                                    diffusion_model=self.actor_target_model)
         return key
 
     @staticmethod
