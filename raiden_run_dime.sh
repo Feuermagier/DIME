@@ -2,7 +2,7 @@
 #$ -S /bin/bash
 #$ -cwd
 #$ -j y
-#$ -jc gpu-container_g1
+#$ -jc gtn-container_g1
 
 #$ -ac d=none
 
@@ -16,9 +16,8 @@ export https_proxy=$MY_PROXY_URL
 export ftp_proxy=$MY_PROXY_URL
 # -------------- do not modify, enables internet access -----------------
 
-cd $HOME/code/DIME
+cd $HOME
 
 source ${HOME}/.bashrc
 
-micromamba activate dime
-python3 run_dime.py &> raiden_logs/run_dime.log
+singularity exec --bind /home:/home,/data:/data,/tmp:/tmp --nv cudagl_egl.sif bash -ic "cd $HOME/code/DIME && micromamba activate dime && python3 run_dime.py &> raiden_logs/run_dime.log"
