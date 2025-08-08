@@ -20,5 +20,5 @@ cd $HOME
 
 source ${HOME}/.bashrc
 
-conda activate dime
+micromamba activate dime
 python3 run_dime.py &> raiden_logs/run_dime.log
