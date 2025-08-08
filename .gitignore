@@ -7,3 +7,4 @@ eval_logs/
 outputs/
 saved_models/
 raiden_logs/
+*.sh.o*
