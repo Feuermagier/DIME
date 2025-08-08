@@ -16,7 +16,7 @@ export https_proxy=$MY_PROXY_URL
 export ftp_proxy=$MY_PROXY_URL
 # -------------- do not modify, enables internet access -----------------
 
-cd $HOME
+cd $HOME/code/DIME
 
 source ${HOME}/.bashrc
 
